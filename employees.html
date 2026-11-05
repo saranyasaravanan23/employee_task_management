@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header>
+    <h1>Employee Management</h1>
+    <p>Register and Manage Employees</p>
+</header>
+
+<nav>
+    <a href="/">Home</a>
+    <a href="/employees-page">Employees</a>
+    <a href="/tasks-page">Tasks</a>
+</nav>
+
+<main class="container">
+
+    <section class="form-section">
+        <h2>Employee Registration Form</h2>
+
+        <form id="employeeForm">
+            <label>Employee Name</label>
+            <input type="text" id="employeeName" required>
+
+            <label>Department</label>
+            <input type="text" id="department" required>
+
+            <label>Email</label>
+            <input type="email" id="email" required>
+
+            <button type="submit">Register Employee</button>
+        </form>
+
+        <p id="message"></p>
+    </section>
+
+    <section class="table-section">
+        <h2>View Employees</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for employee in employees %}
+                <tr>
+                    <td>{{ employee.Employee_ID }}</td>
+                    <td>{{ employee.Employee_Name }}</td>
+                    <td>{{ employee.Department }}</td>
+                    <td>{{ employee.Email }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+</main>
+
+<script>
+document.getElementById("employeeForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const employee = {
+        Employee_Name: document.getElementById("employeeName").value,
+        Department: document.getElementById("department").value,
+        Email: document.getElementById("email").value
+    };
+
+    try {
+        const response = await fetch("/employees/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(employee)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert("Employee registered successfully!");
+            window.location.reload();
+        } else {
+            document.getElementById("message").innerText =
+                result.detail || "Unable to register employee";
+        }
+    } catch (error) {
+        document.getElementById("message").innerText =
+            "Server connection failed";
+    }
+});
+</script>
+
+</body>
+</html>

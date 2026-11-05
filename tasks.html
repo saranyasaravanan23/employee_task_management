@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header>
+    <h1>Task Management</h1>
+    <p>Assign and Track Employee Tasks</p>
+</header>
+
+<nav>
+    <a href="/">Home</a>
+    <a href="/employees-page">Employees</a>
+    <a href="/tasks-page">Tasks</a>
+</nav>
+
+<main class="container">
+
+    <section class="form-section">
+        <h2>Add Task Form</h2>
+
+        <form id="taskForm">
+
+            <label>Employee ID</label>
+            <input type="number" id="employeeId" min="1" required>
+
+            <label>Task Name</label>
+            <input type="text" id="taskName" required>
+
+            <label>Task Status</label>
+            <select id="taskStatus">
+                <option value="Pending">Pending</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+            </select>
+
+            <label>Due Date</label>
+            <input type="date" id="dueDate" required>
+
+            <button type="submit">Add Task</button>
+
+        </form>
+
+        <p id="message"></p>
+    </section>
+
+    <section class="table-section">
+
+        <h2>View All Tasks</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Task ID</th>
+                    <th>Employee ID</th>
+                    <th>Employee Name</th>
+                    <th>Task Name</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td>{{ task.Task_ID }}</td>
+                    <td>{{ task.Employee_ID }}</td>
+                    <td>{{ task.Employee_Name }}</td>
+                    <td>{{ task.Task_Name }}</td>
+                    <td>{{ task.Task_Status }}</td>
+                    <td>{{ task.Due_Date }}</td>
+                    <td>
+                        <select id="status-{{ task.Task_ID }}">
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+
+                        <button onclick="updateStatus({{ task.Task_ID }})">
+                            Update
+                        </button>
+
+                        <button onclick="deleteTask({{ task.Task_ID }})">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </section>
+
+</main>
+
+<script>
+document.getElementById("taskForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const task = {
+        Employee_ID: Number(document.getElementById("employeeId").value),
+        Task_Name: document.getElementById("taskName").value,
+        Task_Status: document.getElementById("taskStatus").value,
+        Due_Date: document.getElementById("dueDate").value
+    };
+
+    try {
+        const response = await fetch("/tasks/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(task)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert("Task added successfully!");
+            window.location.reload();
+        } else {
+            document.getElementById("message").innerText =
+                result.detail || "Unable to add task";
+        }
+    } catch (error) {
+        document.getElementById("message").innerText =
+            "Server connection failed";
+    }
+});
+
+
+async function updateStatus(taskId) {
+
+    const status = document.getElementById("status-" + taskId).value;
+
+    const response = await fetch("/tasks/" + taskId + "/status", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            Task_Status: status
+        })
+    });
+
+    if (response.ok) {
+        alert("Task status updated successfully!");
+        window.location.reload();
+    } else {
+        const result = await response.json();
+        alert(result.detail || "Status update failed");
+    }
+}
+
+
+async function deleteTask(taskId) {
+
+    if (!confirm("Are you sure you want to delete this task?")) {
+        return;
+    }
+
+    const response = await fetch("/tasks/" + taskId, {
+        method: "DELETE"
+    });
+
+    if (response.ok) {
+        alert("Task deleted successfully!");
+        window.location.reload();
+    } else {
+        alert("Task deletion failed");
+    }
+}
+</script>
+
+</body>
+</html>

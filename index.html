@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Task Management System</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Employee Task Management System</h1>
+        <p>Manage Employees and Tasks Easily</p>
+    </header>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/employees-page">Employees</a>
+        <a href="/tasks-page">Tasks</a>
+        <a href="/docs">API Documentation</a>
+    </nav>
+
+    <main class="dashboard">
+        <h2>Welcome to Employee Task Management System</h2>
+
+        <p>
+            This application helps manage employee information
+            and assign tasks efficiently.
+        </p>
+
+        <div class="card-container">
+
+            <div class="card">
+                <h3>Employee Management</h3>
+                <p>Register and view employee details.</p>
+                <a href="/employees-page" class="btn">
+                    Manage Employees
+                </a>
+            </div>
+
+            <div class="card">
+                <h3>Task Management</h3>
+                <p>Add, view, update and delete employee tasks.</p>
+                <a href="/tasks-page" class="btn">
+                    Manage Tasks
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>Employee Task Management System | Python & FastAPI</p>
+    </footer>
+
+</body>
+</html>
